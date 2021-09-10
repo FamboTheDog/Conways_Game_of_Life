@@ -20,6 +20,8 @@ public class Toolbar extends JPanel implements ChangeListener {
     @Getter private static JButton moveMap;
     @Getter private static JButton addCellsController;
 
+    @Getter private static boolean drawing = true;
+
     public Toolbar(MainPanel mainPanel){
         this.setBackground(background);
         this.setBorder(BorderFactory.createLineBorder(Color.lightGray, 5));
@@ -72,8 +74,9 @@ public class Toolbar extends JPanel implements ChangeListener {
 
         JPanel mouseListenerContainer = new JPanel();
         addCellsController = new JButton("Add cells");
-        moveMap = new JButton(           "Move map ");
+        moveMap = new JButton("Move map ");
         addCellsController.addActionListener(e->{
+            drawing = true;
             mainPanel.removeMouseMotionListener(panelMover);
             mainPanel.removeMouseListener(panelMover);
             mainPanel.addMouseMotionListener(addCell);
@@ -83,6 +86,7 @@ public class Toolbar extends JPanel implements ChangeListener {
             this.repaint();
         });
         moveMap.addActionListener(e->{
+            drawing = false;
             mainPanel.removeMouseMotionListener(addCell);
             mainPanel.addMouseMotionListener(panelMover);
             mainPanel.addMouseListener(panelMover);

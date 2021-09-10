@@ -6,7 +6,6 @@ import com.company.view.toolbar.Toolbar;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -35,7 +34,7 @@ public class GameOfLife implements Runnable{
         entities      = new ArrayList<>(mainPanel.getEntities());
         entitiesCopy  = new ArrayList<>();
         addedEntities = new ArrayList<>();
-        Toolbar.getMoveMap().doClick();
+        if(Toolbar.isDrawing()) Toolbar.getMoveMap().doClick();
         Toolbar.getAddCellsController().setEnabled(false);
         startScheduler(timeout);
     }
