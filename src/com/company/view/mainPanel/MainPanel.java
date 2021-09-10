@@ -24,20 +24,12 @@ public class MainPanel extends JPanel {
 
     @Getter @Setter private double scale = 1;
 
-    @Getter @Setter private AddCell addCell;
-
     public MainPanel(){
         offSetX = 0;
         offSetY = 0;
 
-        PanelMover panelMover = new PanelMover(this);
-
-        this.addMouseListener(panelMover);
-        this.addMouseMotionListener(panelMover);
         this.addMouseWheelListener(new WheelListener(this));
-
-        addCell = new AddCell(this);
-        this.addMouseListener(addCell);
+        // different mouseListeners are added via Toolbar class.
     }
 
     public void paintComponent(Graphics g){

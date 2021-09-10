@@ -2,7 +2,10 @@ package com.company.view.toolbar;
 
 import com.company.algorithm.GameOfLife;
 import com.company.keybinds.Start;
+import com.company.listeners.AddCell;
+import com.company.listeners.PanelMover;
 import com.company.view.mainPanel.MainPanel;
+import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -11,8 +14,12 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Toolbar extends JPanel implements ChangeListener {
-    private Start starter;
-    private Color background = Color.gray;
+    private final Start starter;
+    private final Color background = Color.gray;
+
+    @Getter private static JButton moveMap;
+    @Getter private static JButton addCellsController;
+
     public Toolbar(MainPanel mainPanel){
         this.setBackground(background);
         this.setBorder(BorderFactory.createLineBorder(Color.lightGray, 5));
@@ -60,6 +67,34 @@ public class Toolbar extends JPanel implements ChangeListener {
 
         this.add(container);
 
+        PanelMover panelMover = new PanelMover(mainPanel);
+        AddCell addCell = new AddCell(mainPanel);
+
+        JPanel mouseListenerContainer = new JPanel();
+        addCellsController = new JButton("Add cells");
+        moveMap = new JButton(           "Move map ");
+        addCellsController.addActionListener(e->{
+            mainPanel.removeMouseMotionListener(panelMover);
+            mainPanel.removeMouseListener(panelMover);
+            mainPanel.addMouseMotionListener(addCell);
+            mouseListenerContainer.remove(addCellsController);
+            mouseListenerContainer.add(moveMap);
+            this.revalidate();
+            this.repaint();
+        });
+        moveMap.addActionListener(e->{
+            mainPanel.removeMouseMotionListener(addCell);
+            mainPanel.addMouseMotionListener(panelMover);
+            mainPanel.addMouseListener(panelMover);
+            mouseListenerContainer.remove(moveMap);
+            mouseListenerContainer.add(addCellsController);
+            this.revalidate();
+            this.repaint();
+        });
+        mouseListenerContainer.add(moveMap);
+        mainPanel.addMouseMotionListener(addCell);
+        this.add(mouseListenerContainer);
+
         // paint every child's background with parent's background color
         // I wanted to call this recursively on components subcomponents, but it made some components look horrible
         for (Component component: this.getComponents()) component.setBackground(background);
@@ -73,6 +108,7 @@ public class Toolbar extends JPanel implements ChangeListener {
             gol.setChangingSpeed(true);
             JSlider source = (JSlider) e.getSource();
             gol.setTimeout(source.getValue());
+            starter.setTimeout(source.getValue());
         }
     }
 }

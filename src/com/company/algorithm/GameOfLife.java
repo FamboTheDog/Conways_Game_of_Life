@@ -2,9 +2,11 @@ package com.company.algorithm;
 
 import com.company.view.mainPanel.MainPanel;
 import com.company.entities.Entity;
+import com.company.view.toolbar.Toolbar;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -13,8 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 public class GameOfLife implements Runnable{
 
-    public GameOfLife(MainPanel mainPanel){
+    public GameOfLife(MainPanel mainPanel, int timeout){
         this.mainPanel = mainPanel;
+        this.timeout = timeout;
     }
 
     private final MainPanel mainPanel;
@@ -22,19 +25,18 @@ public class GameOfLife implements Runnable{
     private ArrayList<Entity> entities;
     private ArrayList<Entity> entitiesCopy;
     private ArrayList<Entity> addedEntities;
-    private ArrayList<Entity> toPaint;
 
     @Getter @Setter boolean isRunning = true;
     @Getter @Setter boolean changingSpeed = false;
-    @Getter @Setter int timeout = 100;
+    @Getter @Setter int timeout;
 
     @Override
     public void run() {
         entities      = new ArrayList<>(mainPanel.getEntities());
         entitiesCopy  = new ArrayList<>();
         addedEntities = new ArrayList<>();
-        toPaint       = new ArrayList<>();
-        mainPanel.removeMouseListener(mainPanel.getAddCell());
+        Toolbar.getMoveMap().doClick();
+        Toolbar.getAddCellsController().setEnabled(false);
         startScheduler(timeout);
     }
 
@@ -45,18 +47,16 @@ public class GameOfLife implements Runnable{
                 entities.forEach(this::checkAliveTiles);
                 entities = new ArrayList<>(entitiesCopy);
 
-                mainPanel.setEntities(new ArrayList<>(toPaint));
+                mainPanel.setEntities(new ArrayList<>(entitiesCopy));
 
                 entitiesCopy.clear();
                 addedEntities.clear();
 
                 mainPanel.repaint();
-
-                toPaint.clear();
             }else{
                 if(!changingSpeed){
                     executor.shutdown();
-                    mainPanel.addMouseListener(mainPanel.getAddCell());
+                    Toolbar.getAddCellsController().setEnabled(true);
                 }else{
                     executor.shutdown();
                     changingSpeed = false;
@@ -91,7 +91,6 @@ public class GameOfLife implements Runnable{
             entity.setAlive(false);
         }else{
             entitiesCopy.add(entity);
-            toPaint.add(entity);
         }
 
     }
@@ -122,7 +121,6 @@ public class GameOfLife implements Runnable{
                         }
 
                         entitiesCopy.add(newEntity);
-                        toPaint.add(newEntity);
                         addedEntities.add(newEntity);
                     }
                 }

@@ -3,12 +3,12 @@ package com.company.listeners;
 import com.company.view.mainPanel.MainPanel;
 import com.company.entities.Entity;
 
-import java.awt.*;
-import java.awt.event.MouseAdapter;
+import javax.swing.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Rectangle2D;
 
-public class AddCell extends MouseAdapter {
+public class AddCell extends MouseMotionAdapter {
 
     private MainPanel mainPanel;
 
@@ -16,19 +16,19 @@ public class AddCell extends MouseAdapter {
         this.mainPanel = mainPanel;
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1){
+
+    public void mouseDragged(MouseEvent e) {
+        if(SwingUtilities.isLeftMouseButton(e)){
             leftClick(e);
-        }else{
+        }else if(SwingUtilities.isRightMouseButton(e)){
             rightClick(e);
         }
         mainPanel.repaint();
     }
 
     private void rightClick(MouseEvent e) {
-        double x =  calculatePosition(e.getX(), mainPanel.getOffSetX());
-        double y =  calculatePosition(e.getY(), mainPanel.getOffSetY());
+        double x = calculatePosition(e.getX(), mainPanel.getOffSetX());
+        double y = calculatePosition(e.getY(), mainPanel.getOffSetY());
 
         for (Entity entity : mainPanel.getEntities()) {
             if(entity.getBounds().intersects(new Rectangle2D.Double(x, y,1,1))){

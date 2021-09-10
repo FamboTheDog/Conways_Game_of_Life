@@ -24,6 +24,7 @@ public class PanelMover extends MouseAdapter implements MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        System.out.println(mainPanel.getOffSetX() + "  " + mainPanel.getOffSetY());
         mainPanel.setOffSetX(-(-mainPanel.getOffSetX() + startX - e.getX()));
         mainPanel.setOffSetY(-(-mainPanel.getOffSetY() + startY - e.getY()));
         startX = e.getX();
